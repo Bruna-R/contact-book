@@ -8,35 +8,42 @@ import { PrismaService } from 'src/database/prisma.service';
 @Injectable()
 export class ContactPrismaRepository implements ContactsRepository {
   constructor(private prisma: PrismaService) {}
-  async create(data: CreateContactDto): Promise<Contact> {
+
+  async create(data: CreateContactDto, userId: string): Promise<Contact> {
     const contact = new Contact();
-    Object.assign(contact, { ...data });
+    Object.assign(contact, { ...data, userId });
     const newContact = await this.prisma.contact.create({
-      data: { ...contact, userId: contact.userId },
+      data: { ...contact, userId },
     });
 
     return newContact;
   }
-  async findAll(): Promise<Contact[]> {
-    const contacts = await this.prisma.contact.findMany();
+  async findAll(userId: string): Promise<Contact[]> {
+    const contacts = await this.prisma.contact.findMany({
+      where: { userId },
+    });
     return contacts;
   }
-  async findOne(id: string): Promise<Contact> {
-    const contact = await this.prisma.contact.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string): Promise<Contact> {
+    const contact = await this.prisma.contact.findFirst({
+      where: { id, userId },
     });
     return contact;
   }
-  async update(id: string, data: UpdateContactDto): Promise<Contact> {
+  async update(
+    id: string,
+    data: UpdateContactDto,
+    userId: string,
+  ): Promise<Contact> {
     const contact = await this.prisma.contact.update({
-      where: { id },
+      where: { id, userId },
       data: { ...data },
     });
     return contact;
   }
-  async remove(id: string): Promise<void> {
+  async remove(id: string, userId: string): Promise<void> {
     await this.prisma.contact.delete({
-      where: { id },
+      where: { id, userId },
     });
   }
 }

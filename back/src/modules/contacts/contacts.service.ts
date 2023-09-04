@@ -6,16 +6,16 @@ import { ContactsRepository } from './repositories/contacts.repository';
 @Injectable()
 export class ContactsService {
   constructor(private contacstRepository: ContactsRepository) {}
-  async create(createContactDto: CreateContactDto) {
-    return await this.contacstRepository.create(createContactDto);
+  async create(createContactDto: CreateContactDto, userId: string) {
+    return await this.contacstRepository.create(createContactDto, userId);
   }
 
-  async findAll() {
-    return await this.contacstRepository.findAll();
+  async findAll(userId: string) {
+    return await this.contacstRepository.findAll(userId);
   }
 
-  async findOne(id: string) {
-    const findContact = await this.contacstRepository.findOne(id);
+  async findOne(id: string, userId: string) {
+    const findContact = await this.contacstRepository.findOne(id, userId);
 
     if (!findContact) {
       throw new NotFoundException('Contact not found');
@@ -23,21 +23,21 @@ export class ContactsService {
     return findContact;
   }
 
-  async update(id: string, updateContactDto: UpdateContactDto) {
-    const findContact = await this.contacstRepository.findOne(id);
+  async update(id: string, updateContactDto: UpdateContactDto, userId: string) {
+    const findContact = await this.contacstRepository.findOne(id, userId);
 
     if (!findContact) {
       throw new NotFoundException('Contact not found');
     }
-    return await this.contacstRepository.update(id, updateContactDto);
+    return await this.contacstRepository.update(id, updateContactDto, userId);
   }
 
-  async remove(id: string) {
-    const findContact = await this.contacstRepository.findOne(id);
+  async remove(id: string, userId: string) {
+    const findContact = await this.contacstRepository.findOne(id, userId);
 
     if (!findContact) {
       throw new NotFoundException('Contact not found');
     }
-    return await this.contacstRepository.remove(id);
+    return await this.contacstRepository.remove(id, userId);
   }
 }
